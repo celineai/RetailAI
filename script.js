@@ -2,6 +2,7 @@
 const chatBox = document.getElementById("chat-box");
 const inputBox = document.getElementById("user-input");
 const submitBtn = document.getElementById("send-btn");
+const typingIndicator = document.getElementById("typing-indicator");
 
 // Function to append messages to the chat box
 function appendMessage(message, sender) {
@@ -28,12 +29,16 @@ function getCurrentTime() {
 // Event listener for the submit button
 submitBtn.addEventListener("click", async () => {
     const userQuestion = inputBox.value.trim();
-
     if (!userQuestion) return; // Do nothing if the input is empty
 
     // Display user question
     appendMessage(userQuestion, "user");
     inputBox.value = ""; // Clear the input box
+
+    // Show typing indicator & record the start time
+    showTypingIndicator();
+    const startTime = Date.now();
+    const minTypingTime = 1000;  // minimum 1 second of typing
 
     // Call the API to get the answer
     try {
@@ -48,9 +53,25 @@ submitBtn.addEventListener("click", async () => {
         const data = await response.json();
         const botAnswer = data.result;
 
+        // calculate elapsed time and await if needed to meet typing time
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime < minTypingTime ) {
+            await new Promise(resolve => setTimeout(resolve, minTypingTime - elapsedTime));
+        }
+
+        // Hide typing indicator
+        hideTypingIndicator();
+
         // Display bot's answer
         appendMessage(botAnswer, "bot");
     } catch (error) {
+        // ensure minimum typing for errors
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime < minTypingTime ) {
+            await new Promise(resolve => setTimeout(resolve, minTypingTime - elapsedTime));
+        }
+
+        hideTypingIndicator();
         appendMessage("Sorry, there was an error. Please try again.", "bot");
     }
 });
@@ -61,3 +82,22 @@ inputBox.addEventListener("keypress", (event) => {
         submitBtn.click();
     }
 });
+
+// Decoration: Show Typing Indicator
+function showTypingIndicator() {
+    typingIndicator.style.display = "block";
+    setTimeout(() => {
+    scrollToBottom();
+    }, 10);
+}
+
+// Hide Typing Indicator
+function hideTypingIndicator() {
+    typingIndicator.style.display = "none";
+}
+
+// Scroll to Bottom
+function scrollToBottom() {
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
