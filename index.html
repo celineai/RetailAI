@@ -8,15 +8,39 @@
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
+    <div class="app-container">
+    <!-- Chat Header-->
+     <div class="chat-header">
+        <div class="chat-title">
+            <div class="bot-avatar"> :) </div>
+            <h2>RetailAI</h2>
+        </div>
+        <span id="status-indicator" title="Online"></span>
+     </div>
+
     <!-- Chat Container -->
     <div class="chat-container">
         <!-- Chat Box for Messages -->
         <div id="chat-box">
             <!-- Example Bot Message -->
+             <div class="welcome-message">
+                <h3>Welcome to the Retail Chat Assistant!</h3>
+                <p>Ask me anything surrounding your data!</p>
+             </div>
+
             <div class="message bot-message">
                 Hello! How can I assist you today?
                 <span class="message-timestamp">10:00 AM</span>
             </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+ 
         </div>
 
         <!-- Input Area -->
@@ -25,7 +49,7 @@
             <button id="send-btn">Send</button>
         </div>
     </div>
-
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
