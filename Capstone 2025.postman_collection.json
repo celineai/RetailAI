@@ -1,0 +1,368 @@
+{
+	"info": {
+		"_postman_id": "875989b5-253b-4168-830e-2c35a8bf7b39",
+		"name": "Capstone 2025",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41580281"
+	},
+	"item": [
+		{
+			"name": "Square APIs",
+			"item": [
+				{
+					"name": "Create Catalog Items",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idempotency_key\": \"Test2\",\n    \"object\": {\n        \"type\": \"ITEM\",\n        \"id\": \"#Dress\",\n        \"present_at_all_locations\": true,\n        \"item_data\": {\n            \"name\": {{Item Name}},\n            \"description\": {{Description}},\n            \"variations\": [\n                {\n                    \"type\": {{Variation Name}},\n                    \"id\": {{Reporting Catagory}},\n                    \"present_at_all_locations\": true,\n                    \"item_variation_data\": {\n                        \"item_id\": \"#Dress\",\n                        \"name\": {{Default Vendor Name}},\n                        \"pricing_type\": \"FIXED_PRICING\",\n                        \"price_money\": {\n                            \"amount\": {{Price}},\n                            \"currency\": \"USD\"\n                        }\n                    }\n                }\n            ]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/v2/catalog/object",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"object"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Catalog Items - Runner",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Read variables from iteration data\r",
+									"let itemName = pm.iterationData.get(\"Item Name\");\r",
+									"let variationName = pm.iterationData.get(\"Variation Name\") || \"\";\r",
+									"let sku = pm.iterationData.get(\"SKU\") || \"\";\r",
+									"let description = pm.iterationData.get(\"Description\") || \"\";\r",
+									"let categoryId = pm.iterationData.get(\"Reporting Category\") || \"\";\r",
+									"let priceCents = pm.iterationData.get(\"PriceCents\");\r",
+									"let optionName = pm.iterationData.get(\"Option Name 1\") || \"\";\r",
+									"let optionValue = pm.iterationData.get(\"Option Value 1\") || \"\";\r",
+									"\r",
+									"// Debugging output\r",
+									"console.log(\"DEBUG: Item Name →\", itemName);\r",
+									"console.log(\"DEBUG: PriceCents →\", priceCents);\r",
+									"\r",
+									"// Ensure price is an integer\r",
+									"if (!priceCents || isNaN(priceCents)) {\r",
+									"    console.error(\"ERROR: PriceCents is missing or invalid\");\r",
+									"    pm.environment.set(\"PriceCents\", \"0\");\r",
+									"} else {\r",
+									"    pm.environment.set(\"PriceCents\", parseInt(priceCents, 10));\r",
+									"}\r",
+									"\r",
+									"// Set other variables\r",
+									"pm.environment.set(\"Item Name\", itemName);\r",
+									"pm.environment.set(\"Variation Name\", variationName);\r",
+									"pm.environment.set(\"SKU\", sku);\r",
+									"pm.environment.set(\"Description\", description);\r",
+									"pm.environment.set(\"Category ID\", categoryId);\r",
+									"pm.environment.set(\"Option Name\", optionName);\r",
+									"pm.environment.set(\"Option Value\", optionValue);\r",
+									"\r",
+									"// Generate a GUID for Item ID and Variation ID\r",
+									"let itemId = pm.environment.get(\"Item ID\") || `#${pm.variables.replaceIn(\"{{$guid}}\")}`;\r",
+									"let variationId = pm.environment.get(\"Variation ID\") || `#${pm.variables.replaceIn(\"{{$guid}}\")}`;\r",
+									"\r",
+									"pm.environment.set(\"Item ID\", itemId);\r",
+									"pm.environment.set(\"Variation ID\", variationId);\r",
+									"\r",
+									"console.log(\"DEBUG: Item ID →\", itemId);\r",
+									"console.log(\"DEBUG: Variation ID →\", variationId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Category</th>\r",
+									"        <th>Code</th>\r",
+									"        <th>Detail</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.errors}}\r",
+									"        <tr>\r",
+									"            <td>{{category}}</td>\r",
+									"            <td>{{code}}</td>\r",
+									"            <td>{{detail}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idempotency_key\": \"{{$randomUUID}}\",\n    \"object\": {\n        \"type\": \"ITEM\",\n        \"id\": \"{{Item ID}}\",\n        \"present_at_all_locations\": true,\n        \"item_data\": {\n            \"name\": \"{{Item Name}}\",\n            \"description\": \"{{Description}}\",\n            \"category_id\": \"{{Category ID}}\",\n            \"variations\": [\n                {\n                    \"type\": \"ITEM_VARIATION\",\n                    \"id\": \"{{Variation ID}}\",\n                    \"present_at_all_locations\": true,\n                    \"item_variation_data\": {\n                        \"item_id\": \"{{Item ID}}\",\n                        \"name\": \"{{Option Name}} - {{Option Value}}\",\n                        \"sku\": \"{{SKU}}\",\n                        \"pricing_type\": \"FIXED_PRICING\",\n                        \"price_money\": {\n                            \"amount\": {{PriceCents}},\n                            \"currency\": \"USD\"\n                        }\n                    }\n                }\n            ]\n        }\n    }\n}\n"
+						},
+						"url": {
+							"raw": "https://{{host}}/v2/catalog/object",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"object"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ListCatalog",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/v2/catalog/list",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"list"
+							],
+							"query": [
+								{
+									"key": "cursor",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "types",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "catalog_version",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RetrieveInventoryCount",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/v2/inventory/M2HB5MIJN5EJJW7YZ4QMVSG3",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v2",
+								"inventory",
+								"M2HB5MIJN5EJJW7YZ4QMVSG3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idempotency_key\": \"{{$guid}}\",\n    \"order\": {\n        \"location_id\": \"{{location_id}}\",\n        \"customer_id\": \"{{customer_id}}\",\n        \"line_items\": [\n            {\n                \"quantity\": \"1\",\n                \"base_price_money\": {\n                    \"amount\": 100,\n                    \"currency\": \"USD\"\n                },\n                \"catalog_object_id\": \"M4ZCRV2XZ6E76FC5XDDJZQTK\",\n                \"item_type\": \"ITEM\",\n            }\n        ],\n        \"pricing_options\": {\n            \"auto_apply_discounts\": true,\n            \"auto_apply_taxes\": true\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/v2/orders",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v2",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"customer_id\", jsonData.customer.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idempotency_key\": \"Test3\",\n  \"given_name\": \"Amelia\",\n  \"family_name\": \"Earhart\",\n  \"company_name\": \"Square\",\n  \"nickname\": \"Yeo\", \n  \"email_address\": \"Amelia.Earhart@example.com\",\n  \"address\": {\n    \"address_line_1\": \"500 Electric Ave\",\n    \"address_line_2\": \"Suite 600\",\n    \"locality\": \"New York\",\n    \"administrative_district_level_1\": \"NY\",\n    \"postal_code\": \"10003\",\n    \"country\": \"US\"\n  },\n  \"phone_number\": \"1-212-555-4240\",\n  \"reference_id\": \"YOUR_REFERENCE_ID\",\n  \"note\": \"a customer\",\n  \"birthday\": \"2008-03-05\"\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/v2/customers",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v2",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idempotency_key\": \"{{$randomUUID}}\",\r\n    \"object\": {\r\n        \"type\": \"ITEM\",\r\n        \"id\": \"#{{$guid}}\",\r\n        \"present_at_all_locations\": true,\r\n        \"item_data\": {\r\n            \"name\": \"{{Item Name}}\",\r\n            \"description\": \"{{Description}}\",\r\n            \"category_id\": \"{{Reporting Category}}\",\r\n            \"variations\": [\r\n                {\r\n                    \"type\": \"ITEM_VARIATION\",\r\n                    \"id\": \"#{{$guid}}\",\r\n                    \"present_at_all_locations\": true,\r\n                    \"item_variation_data\": {\r\n                        \"item_id\": \"#{{$guid}}\",\r\n                        \"name\": \"{{Option Name 1}} - {{Option Value 1}}\",\r\n                        \"sku\": \"{{SKU}}\",\r\n                        \"pricing_type\": \"FIXED_PRICING\",\r\n                        \"price_money\": {\r\n                            \"amount\": {{PriceCents}},\r\n                            \"currency\": \"USD\"\r\n                        }\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
