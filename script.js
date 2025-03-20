@@ -42,7 +42,7 @@ submitBtn.addEventListener("click", async () => {
 
     // Call the API to get the answer
     try {
-        const response = await fetch('https://your-api-id.execute-api.us-east-2.amazonaws.com/prod/query', {
+        const response = await fetch('https://mi138npanl.execute-api.us-east-2.amazonaws.com/query', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
