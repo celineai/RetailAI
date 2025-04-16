@@ -1,0 +1,27 @@
+{
+  "name": "retail-ai",
+  "version": "1.0.0",
+  "description": "Retail AI Local App",
+  "main": "start.js",
+  "bin": "start.js",
+  "scripts": {
+    "start": "node start.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "open": "^9.1.0"
+  },
+  "pkg": {
+    "scripts": "start.js",
+    "assets": [
+      "index.html",
+      "style.css",
+      "script.js",
+      "chat_logs.txt",
+      "start.js"
+    ],
+    "targets": [
+      "node18-win-x64"
+    ]
+  }
+}

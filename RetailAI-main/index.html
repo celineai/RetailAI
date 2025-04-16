@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AI Chat Interface</title>
+    <link rel="stylesheet" href="style.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Chat Header-->
+        <div class="chat-header">
+            <div class="chat-title">
+                <div class="bot-avatar"> : </div>
+                <h2>RetailAI</h2>
+            </div>
+            <span id="status-indicator" title="Online"></span>
+            <button id="export-log-btn" title="Export Conversation Log">📋</button>
+            <button id="clear-history-btn" title="Clear History">✖</button>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Chat Box for Messages -->
+            <div id="chat-box">
+                <!-- Example Bot Message -->
+                <div class="welcome-message">
+                    <h3>Welcome to the Retail Chat Assistant!</h3>
+                    <p>Ask me anything surrounding your data!</p>
+                </div>
+                <div class="message bot-message">
+                    Hello! How can I assist you today?
+                    <span class="message-timestamp">10:00 AM</span>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="suggested-prompts">
+                <h4>Suggested Prompts:</h4>
+                <button onclick="setPrompt(`Which products or categories sold best over the last month, and how do they compare to the previous month? Include top-selling styles, colors, and price points.`)">Top Sellers & Trends</button>
+                <button onclick="setPrompt(`Please tell me about my highest paying customers and what styles they like from my catalog?`)">Top Customers & Styles</button>
+                <button onclick="setPrompt(`What trends of my catalog appear to be moving the slowest? Also, how can I discount these items to move them faster?`)">Slow Movers & Discounting</button>
+                <button onclick="setPrompt(`Based on my data of Customers, Orders, and Catalog, what would be a good business goal that I could achieve in the next 6 months and what guidance can you give me to achieve it?`)">Business Goal Guidance</button>
+            </div>
+            <!-- Input Area -->
+            <div id="input-container">
+                <input type="text" id="user-input" placeholder="Type your message...">
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
